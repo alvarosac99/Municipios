@@ -258,6 +258,7 @@ GROUP BY
     P.nombre;
 
 -- 12. Media de personas a cargo de un cabeza de familia en cada municipio de la provincia de Asturias.
+--:c
 -- 13. Tamaño medio en metros cuadrados de las viviendas de cada municipio de la provincia de Asturias.
 SELECT
     M.nombre,
