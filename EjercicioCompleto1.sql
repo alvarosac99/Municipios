@@ -17,8 +17,10 @@ CREATE TABLE
         nombre VARCHAR(100) NOT NULL,
         TLF INT (9),
         vivir INT,
+        empadronada INT,
         CHECK (DNI REGEXP '[0-9]+[A-Z]'),
-        FOREIGN KEY (vivir) REFERENCES VIVIENDAS (codigo)
+        FOREIGN KEY (vivir) REFERENCES VIVIENDAS (codigo),
+        FOREIGN KEY (empadronada) REFERENCES MUNICIPIOS (codigo)
     );
 
 --2. Ahora añado una nueva columna a VIVIENDAS, propietario, que almacena el DNI de la persona a la que le pertenece cada vivienda. 
@@ -58,18 +60,18 @@ VALUES
 
 -- 2. Insertar personas asociadas a las viviendas
 INSERT INTO
-    PERSONAS (cabeza, DNI, nombre, TLF, vivir)
+    PERSONAS (cabeza, DNI, nombre, TLF, vivir, empadronada)
 VALUES
-    (TRUE, '12345678A', 'Juan Pérez', 666777888, 1),
-    (FALSE, '23456789B', 'María López', 666888999, 2),
-    (TRUE, '34567890C', 'Carlos Martínez', 666999000, 3),
-    (FALSE, '45678901D', 'Ana García', 666000111, 4),
-    (TRUE, '56789012E', 'Laura Rodríguez', 666111222, 5),
-    (FALSE, '67890123F', 'Pedro Sánchez', 666222333, 6),
-    (TRUE, '78901234G', 'Sara Ramírez', 666333444, 7),
-    (FALSE, '89012345H', 'Pablo Ruiz', 666444555, 8),
-    (TRUE, '90123456I', 'Carmen Gómez', 666555666, 9),
-    (FALSE, '01234567J', 'Javier Martín', 666666777, 10);
+    (TRUE, '12345678A', 'Juan Pérez', 666777888, 1, 1),
+    (FALSE, '23456789B', 'María López', 666888999, 2, 2),
+    (TRUE, '34567890C', 'Carlos Martínez', 666999000, 3, 3),
+    (FALSE, '45678901D', 'Ana García', 666000111, 4, 4),
+    (TRUE, '56789012E', 'Laura Rodríguez', 666111222, 5, 5),
+    (FALSE, '67890123F', 'Pedro Sánchez', 666222333, 6, 6),
+    (TRUE, '78901234G', 'Sara Ramírez', 666333444, 7, 7),
+    (FALSE, '89012345H', 'Pablo Ruiz', 666444555, 8, 8),
+    (TRUE, '90123456I', 'Carmen Gómez', 666555666, 9, 9),
+    (FALSE, '01234567J', 'Javier Martín', 666666777, 10, 10);
 
 -- 3. Actualizo las filas de VIVIENDAS, ahora con propietarios
 UPDATE VIVIENDAS
@@ -99,16 +101,31 @@ SELECT
 FROM
     PERSONAS
 WHERE
-    vivir IN (
+    empadronada = (
         SELECT
             codigo
         FROM
-            VIVIENDAS
+            MUNICIPIOS
         WHERE
-            codigoPostal = '33440'
+            nombre = 'Luarca'
     );
 
 -- Nombre y teléfono de los habitantes del municipio de Valdés.
+SELECT
+    nombre,
+    TLF
+FROM
+    PERSONAS
+WHERE
+    empadronada = (
+        SELECT
+            codigo
+        FROM
+            MUNICIPIOS
+        WHERE
+            nombre = 'Valdés'
+    );
+
 -- Dirección y metros cuadrados de las viviendas del municipio de Navia.
 -- Nombre y teléfono de aquellas personas que poseen una vivienda en Navia.
 -- Nombre y teléfono de los habitantes de Luarca.
