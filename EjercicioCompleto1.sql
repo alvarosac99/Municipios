@@ -93,3 +93,38 @@ WHERE
 
 --4. CONSULTAS
 -- Nombre y teléfono de los habitantes de Luarca.
+SELECT
+    nombre,
+    TLF
+FROM
+    PERSONAS
+WHERE
+    vivir IN (
+        SELECT
+            codigo
+        FROM
+            VIVIENDAS
+        WHERE
+            codigoPostal = '33440'
+    );
+
+-- Nombre y teléfono de los habitantes del municipio de Valdés.
+-- Dirección y metros cuadrados de las viviendas del municipio de Navia.
+-- Nombre y teléfono de aquellas personas que poseen una vivienda en Navia.
+-- Nombre y teléfono de los habitantes de Luarca.
+--De todas las viviendas del municipio de Avilés, su dirección, localidad y nombre del propietario.
+--Nombre, dirección y teléfono de todos los cabeza de familia empadronados en el municipio de Tineo.
+--Dirección completa de todas las viviendas del municipio de Oviedo y nombre y teléfono de su propietario para todas aquellas que superan los 150 m2.
+--Nombre de todos los municipios de Asturias en los que la superficie media de sus viviendas supera los 70 m2.
+--Nombre de cada municipio de Asturias y cantidad de viviendas en cada uno de ellos que supera los 300 m2
+--Número total de cabezas de familia empadronados en el municipio de Proaza.
+--Número total de municipios en cada provincia junto con el nombre de la misma.
+--Cantidad total de personas a cargo de cada cabeza de familia de las localidades de Asturias cuyo nombre empieza o termina por la letra ‘s’.
+--Media de personas a cargo de un cabeza de familia en cada municipio de la provincia de Asturias.
+--Tamaño medio en metros cuadrados de las viviendas de cada municipio de la provincia de Asturias.
+--Nombre, dirección y teléfono del cabeza de familia responsable de la persona con el D.N.I.  11.421.124.
+--ombre y número de viviendas que posee cada cabeza de familia empadronado en un municipio de Asturias.
+--Nombre, dirección y teléfono de aquellos cabezas de familia que no poseen una vivienda en el municipio en el que están empadronados.
+--Nombre, dirección y teléfono de las personas que están empadronadas o poseen una vivienda en el municipio de Colunga y cuyo nombre empieza por la letra ‘A’. La consulta incluirá una última columna en la que se mostrará el valor “empadronado” si la fila incluye datos de una persona empadronada o el valor “propietario” si la fila incluye datos de una persona que posee una vivienda en el municipio.
+--Dirección completa de la vivienda, junto con el nombre y teléfono de su propietario, de aquellas viviendas de Asturias cuya superficie sea mayor que la de todas las viviendas de Boal.
+--Nombre, dirección y teléfono de las personas cuyo nombre empieza por la letra ‘B’, que están empadronadas en Morcín y poseen viviendas en dicho municipio.
