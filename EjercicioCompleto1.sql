@@ -94,7 +94,7 @@ WHERE
     codigo IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
 --4. CONSULTAS
--- Nombre y teléfono de los habitantes de Luarca.
+-- 0. Nombre y teléfono de los habitantes de Luarca.
 SELECT
     nombre,
     TLF
@@ -110,7 +110,7 @@ WHERE
             nombre = 'Luarca'
     );
 
--- Nombre y teléfono de los habitantes del municipio de Valdés.
+-- 1. Nombre y teléfono de los habitantes del municipio de Valdés.
 SELECT
     nombre,
     TLF
@@ -126,22 +126,237 @@ WHERE
             nombre = 'Valdés'
     );
 
--- Dirección y metros cuadrados de las viviendas del municipio de Navia.
--- Nombre y teléfono de aquellas personas que poseen una vivienda en Navia.
--- Nombre y teléfono de los habitantes de Luarca.
---De todas las viviendas del municipio de Avilés, su dirección, localidad y nombre del propietario.
---Nombre, dirección y teléfono de todos los cabeza de familia empadronados en el municipio de Tineo.
---Dirección completa de todas las viviendas del municipio de Oviedo y nombre y teléfono de su propietario para todas aquellas que superan los 150 m2.
---Nombre de todos los municipios de Asturias en los que la superficie media de sus viviendas supera los 70 m2.
---Nombre de cada municipio de Asturias y cantidad de viviendas en cada uno de ellos que supera los 300 m2
---Número total de cabezas de familia empadronados en el municipio de Proaza.
---Número total de municipios en cada provincia junto con el nombre de la misma.
---Cantidad total de personas a cargo de cada cabeza de familia de las localidades de Asturias cuyo nombre empieza o termina por la letra ‘s’.
---Media de personas a cargo de un cabeza de familia en cada municipio de la provincia de Asturias.
---Tamaño medio en metros cuadrados de las viviendas de cada municipio de la provincia de Asturias.
---Nombre, dirección y teléfono del cabeza de familia responsable de la persona con el D.N.I.  11.421.124.
---ombre y número de viviendas que posee cada cabeza de familia empadronado en un municipio de Asturias.
---Nombre, dirección y teléfono de aquellos cabezas de familia que no poseen una vivienda en el municipio en el que están empadronados.
---Nombre, dirección y teléfono de las personas que están empadronadas o poseen una vivienda en el municipio de Colunga y cuyo nombre empieza por la letra ‘A’. La consulta incluirá una última columna en la que se mostrará el valor “empadronado” si la fila incluye datos de una persona empadronada o el valor “propietario” si la fila incluye datos de una persona que posee una vivienda en el municipio.
---Dirección completa de la vivienda, junto con el nombre y teléfono de su propietario, de aquellas viviendas de Asturias cuya superficie sea mayor que la de todas las viviendas de Boal.
---Nombre, dirección y teléfono de las personas cuyo nombre empieza por la letra ‘B’, que están empadronadas en Morcín y poseen viviendas en dicho municipio.
+-- 2. Dirección y metros cuadrados de las viviendas del municipio de Navia.
+SELECT
+    V.direccion,
+    V.m2
+FROM
+    VIVIENDAS V
+    JOIN MUNICIPIOS M ON V.codigo = M.codigo
+WHERE
+    M.nombre = 'Navia';
+
+-- 3. Nombre y teléfono de aquellas personas que poseen una vivienda en Navia.
+SELECT
+    P.nombre,
+    P.TLF
+FROM
+    PERSONAS P
+    JOIN VIVIENDAS V ON P.vivir = V.codigo
+    JOIN MUNICIPIOS M ON V.codigo = M.codigo
+WHERE
+    M.nombre = 'Navia';
+
+-- 4. De todas las viviendas del municipio de Avilés, su dirección, localidad y nombre del propietario.
+SELECT
+    V.direccion,
+    M.nombre AS localidad,
+    P.nombre AS propietario,
+    P.TLF
+FROM
+    VIVIENDAS V
+    JOIN MUNICIPIOS M ON V.codigo = M.codigo
+    JOIN PERSONAS P ON V.propietario = P.DNI
+WHERE
+    M.nombre = 'Avilés';
+
+-- 5. Nombre, dirección y teléfono de todos los cabeza de familia empadronados en el municipio de Tineo.
+SELECT
+    P.nombre,
+    V.direccion,
+    P.TLF
+FROM
+    PERSONAS P
+    JOIN VIVIENDAS V ON P.vivir = V.codigo
+WHERE
+    P.cabeza = TRUE
+    AND P.empadronada = (
+        SELECT
+            codigo
+        FROM
+            MUNICIPIOS
+        WHERE
+            nombre = 'Tineo'
+    );
+
+-- 6. Dirección completa de todas las viviendas del municipio de Oviedo y nombre y teléfono de su propietario para todas aquellas que superan los 150 m2.
+SELECT
+    V.direccion,
+    P.nombre AS propietario,
+    P.TLF
+FROM
+    VIVIENDAS V
+    JOIN PERSONAS P ON V.propietario = P.DNI
+    JOIN MUNICIPIOS M ON V.codigo = M.codigo
+WHERE
+    M.nombre = 'Oviedo'
+    AND V.m2 > 150;
+
+-- 7. Nombre de todos los municipios de Asturias en los que la superficie media de sus viviendas supera los 70 m2.
+SELECT
+    M.nombre
+FROM
+    MUNICIPIOS M
+    JOIN VIVIENDAS V ON M.codigo = V.codigo
+GROUP BY
+    M.nombre
+HAVING
+    AVG(V.m2) > 70;
+
+-- 8. Nombre de cada municipio de Asturias y cantidad de viviendas en cada uno de ellos que supera los 300 m2
+SELECT
+    M.nombre,
+    COUNT(*) AS cantidad_viviendas
+FROM
+    VIVIENDAS V
+    JOIN MUNICIPIOS M ON M.codigo = V.codigo
+WHERE
+    V.m2 > 300
+GROUP BY
+    M.nombre;
+
+-- 9. Número total de cabezas de familia empadronados en el municipio de Proaza.
+SELECT
+    COUNT(*) AS total_cabezas_familia
+FROM
+    PERSONAS
+WHERE
+    cabeza = TRUE
+    AND empadronada = (
+        SELECT
+            codigo
+        FROM
+            MUNICIPIOS
+        WHERE
+            nombre = 'Proaza'
+    );
+
+-- 10. Número total de municipios en cada provincia junto con el nombre de la misma.
+SELECT
+    provincia,
+    COUNT(*) AS total_municipios
+FROM
+    MUNICIPIOS
+GROUP BY
+    provincia;
+
+-- 11. Cantidad total de personas a cargo de cada cabeza de familia de las localidades de Asturias cuyo nombre empieza o termina por la letra ‘s’.
+SELECT
+    P.nombre,
+    COUNT(*) AS total_personas_cargo
+FROM
+    PERSONAS P
+    JOIN VIVIENDAS V ON P.vivir = V.codigo
+    JOIN MUNICIPIOS M ON V.codigo = M.codigo
+WHERE
+    (
+        M.nombre LIKE 's%'
+        OR M.nombre LIKE '%s'
+    )
+    AND P.cabeza = TRUE
+GROUP BY
+    P.nombre;
+
+-- 12. Media de personas a cargo de un cabeza de familia en cada municipio de la provincia de Asturias.
+-- 13. Tamaño medio en metros cuadrados de las viviendas de cada municipio de la provincia de Asturias.
+SELECT
+    M.nombre,
+    AVG(V.m2) AS media_metros_cuadrados
+FROM
+    MUNICIPIOS M
+    JOIN VIVIENDAS V ON M.codigo = V.codigo
+GROUP BY
+    M.nombre;
+
+-- 14. Nombre, dirección y teléfono del cabeza de familia responsable de la persona con el D.N.I.  11.421.124.
+SELECT
+    P.nombre,
+    V.direccion,
+    P.TLF
+FROM
+    PERSONAS P
+    JOIN VIVIENDAS V ON P.vivir = V.codigo
+WHERE
+    P.DNI = '11421124F';
+
+--lo cambio solo para que tenga sentido
+-- 15. Nombre y número de viviendas que posee cada cabeza de familia empadronado en un municipio de Asturias.
+SELECT
+    P.nombre,
+    COUNT(*) AS numero_viviendas
+FROM
+    PERSONAS P
+    JOIN VIVIENDAS V ON P.vivir = V.codigo
+    JOIN MUNICIPIOS M ON P.empadronada = M.codigo
+WHERE
+    P.cabeza = TRUE
+GROUP BY
+    P.nombre;
+
+-- 16. Nombre, dirección y teléfono de aquellos cabezas de familia que no poseen una vivienda en el municipio en el que están empadronados.
+SELECT
+    P.nombre,
+    V.direccion,
+    P.TLF
+FROM
+    PERSONAS P
+    JOIN MUNICIPIOS M ON P.empadronada = M.codigo
+    LEFT JOIN VIVIENDAS V ON P.vivir = V.codigo
+WHERE
+    P.cabeza = TRUE
+    AND V.codigo IS NULL;
+
+-- 17. Nombre, dirección y teléfono de las personas que están empadronadas o poseen una vivienda en el municipio de Colunga y cuyo nombre empieza por la letra ‘A’. La consulta incluirá una última columna en la que se mostrará el valor “empadronado” si la fila incluye datos de una persona empadronada o el valor “propietario” si la fila incluye datos de una persona que posee una vivienda en el municipio.
+SELECT
+    P.nombre,
+    V.direccion,
+    P.TLF,
+    CASE
+        WHEN P.vivir IS NOT NULL THEN 'propietario'
+        ELSE 'empadronado'
+    END AS tipo
+FROM
+    PERSONAS P
+    LEFT JOIN VIVIENDAS V ON P.vivir = V.codigo
+    JOIN MUNICIPIOS M ON P.empadronada = M.codigo
+WHERE
+    M.nombre = 'Colunga'
+    AND P.nombre LIKE 'A%';
+
+-- 18. Dirección completa de la vivienda, junto con el nombre y teléfono de su propietario, de aquellas viviendas de Asturias cuya superficie sea mayor que la de todas las viviendas de Boal.
+SELECT
+    V.direccion,
+    P.nombre AS propietario,
+    P.TLF
+FROM
+    VIVIENDAS V
+    JOIN PERSONAS P ON V.propietario = P.DNI
+WHERE
+    V.m2 > (
+        SELECT
+            MAX(m2)
+        FROM
+            VIVIENDAS
+        WHERE
+            empadronada = (
+                SELECT
+                    codigo
+                FROM
+                    MUNICIPIOS
+                WHERE
+                    nombre = 'Boal'
+            )
+    );
+
+--19. Nombre, dirección y teléfono de las personas cuyo nombre empieza por la letra ‘B’, que están empadronadas en Morcín y poseen viviendas en dicho municipio.
+SELECT
+    P.nombre,
+    V.direccion,
+    P.TLF
+FROM
+    PERSONAS P
+    JOIN VIVIENDAS V ON P.vivir = V.codigo
+    JOIN MUNICIPIOS M ON P.empadronada = M.codigo
+WHERE
+    P.nombre LIKE 'B%'
+    AND M.nombre = 'Morcín';
