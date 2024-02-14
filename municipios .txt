@@ -1,0 +1,7 @@
+MUNICIPIOS	(_codigo_, nombre, provincia)
+
+PERSONAS		(_DNI_, nombre, tlf, cabeza, codigoV, codigoM)
+			codigoV, codigoM FK VIVIENDA(codigo), MUNICIPIO(codigo) 
+
+VIVIENDAS	(_codigo_, direccion, cp, m2, propietario)
+			propietario FK PERSONA(DNI)
