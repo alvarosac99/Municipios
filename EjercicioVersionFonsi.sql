@@ -176,10 +176,10 @@ FROM
     JOIN Municipios M ON V.municipio = M.codigo
 WHERE
     (
-        M.nombre LIKE 's%'
-        OR M.nombre LIKE '%s'
+        P.nombre LIKE 's%'
+        OR P.nombre LIKE '%s'
     )
-    AND P.cabeza_familia = P.DNI
-    AND M.provincia = Asturias
+    AND P.cabeza_familia = 'P.DNI'
+    AND M.provincia = 'Asturias'
 GROUP BY
     P.cabeza_familia;
