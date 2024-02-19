@@ -91,6 +91,7 @@ FROM
     JOIN municipios ON viviendas.municipio = municipios.codigo
 WHERE
     municipios.nombre = "Navia";
+
 -- 4. De todas las viviendas del municipio de Avilés, su dirección, localidad y nombre del propietario.
 SELECT
     V.direccion,
@@ -102,6 +103,7 @@ FROM
     JOIN Personas P ON Poseer.propietario = P.DNI
 WHERE
     M.nombre = 'Avilés';
+
 -- 5. Nombre, dirección y teléfono de todos los cabeza de familia empadronados en el municipio de Tineo.
 SELECT
     P.Nombre,
@@ -111,4 +113,73 @@ FROM
     JOIN viviendas v ON P.vivienda = V.codigo
 WHERE
     P.DNI = P.cabeza_familia;
+
 --6.
+--7.Nombre de todos los municipios de Asturias en los que la superficie media de sus viviendas supera los 70 m2.
+SELECT
+    M.nombre
+FROM
+    MUNICIPIOS M
+    JOIN VIVIENDAS V ON M.codigo = V.codigo
+WHERE
+    Municipios.provincia = 'Asturias'
+GROUP BY
+    M.nombre
+HAVING
+    AVG(V.m2) > 70;
+
+--8. Nombre de cada municipio de Asturias y cantidad de viviendas en cada uno de ellos que supera los 300 m2
+SELECT
+    M.nombre,
+    COUNT(Viviendas.codigo)
+FROM
+    MUNICIPIOS M
+    JOIN VIVIENDAS V ON M.viviendas = V.municipio
+WHERE
+    Municipios.provincia = 'Asturias'
+    AND Viviendas.m2 > 300
+GROUP BY
+    M.nombre;
+
+-- 9. Número total de cabezas de familia empadronados en el municipio de Proaza.
+SELECT
+    COUNT(*) AS total_cabezas_familia
+FROM
+    PERSONAS
+WHERE
+    cabeza_familia = DNI
+    AND vivienda = (
+        SELECT
+            codigo
+        FROM
+            MUNICIPIOS
+        WHERE
+            nombre = 'Proaza'
+    );
+
+-- 10. Número total de municipios en cada provincia junto con el nombre de la misma.
+SELECT
+    nombre,
+    COUNT(*) AS total
+FROM
+    MUNICIPIOS
+GROUP BY
+    provincia;
+
+-- 11. Cantidad total de personas a cargo de cada cabeza de familia de las localidades de Asturias cuyo nombre empieza o termina por la letra ‘s’.
+SELECT
+    P.nombre,
+    COUNT(*)
+FROM
+    Personas P
+    JOIN Viviendas V ON P.vivienda = V.codigo
+    JOIN Municipios M ON V.municipio = M.codigo
+WHERE
+    (
+        M.nombre LIKE 's%'
+        OR M.nombre LIKE '%s'
+    )
+    AND P.cabeza_familia = P.DNI
+    AND M.provincia = Asturias
+GROUP BY
+    P.cabeza_familia;

@@ -243,7 +243,7 @@ GROUP BY
 -- 11. Cantidad total de personas a cargo de cada cabeza de familia de las localidades de Asturias cuyo nombre empieza o termina por la letra ‘s’.
 SELECT
   P.nombre,
-  COUNT(*) AS total_personas_cargo
+  COUNT(*) AS Personas_a_cargo
 FROM
   PERSONAS P
   JOIN VIVIENDAS V ON P.vivir = V.codigo
