@@ -91,8 +91,6 @@ FROM
     JOIN municipios ON viviendas.municipio = municipios.codigo
 WHERE
     municipios.nombre = "Navia";
-
--- 4. Nombre y teléfono de aquellas personas que poseen una vivienda en Navia.
 -- 4. De todas las viviendas del municipio de Avilés, su dirección, localidad y nombre del propietario.
 SELECT
     V.direccion,
@@ -104,3 +102,13 @@ FROM
     JOIN Personas P ON Poseer.propietario = P.DNI
 WHERE
     M.nombre = 'Avilés';
+-- 5. Nombre, dirección y teléfono de todos los cabeza de familia empadronados en el municipio de Tineo.
+SELECT
+    P.Nombre,
+    P.Telefono
+FROM
+    Personas p
+    JOIN viviendas v ON P.vivienda = V.codigo
+WHERE
+    P.DNI = P.cabeza_familia;
+--6.
